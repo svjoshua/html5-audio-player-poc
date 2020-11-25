@@ -9,6 +9,6 @@
   * control bar should lock to bottom and the grey box should be used to fill
 * general cleanup
 * split into seperate files for
- * CSS
- * Scripts
- * HTML
+  * CSS
+  * Scripts
+  * HTML
