@@ -1,0 +1,276 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Audio Player POC</title>
+
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<style>
+		.audio_player{ 
+			height: 370px;
+			width: 480px;
+			display: block; 
+			position: relative;
+			background: #050505; /* Old browsers */
+			background: -moz-linear-gradient(top, #4b4b4b 0%, #050505 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #4b4b4b 0%,#050505 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #4b4b4b 0%,#050505 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+
+		.audio_player .player{display: none;}
+
+		.audio_player .controls{
+			display: block;
+			height: 24px;
+			width: 100%;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			background: #a7aeb1; /* Old browsers */
+			background: -moz-linear-gradient(top, #a7aeb1 0%, #25353c 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #a7aeb1 0%,#25353c 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #a7aeb1 0%,#25353c 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+
+		.audio_player .controls .progress_timer{
+			display: inline-block;
+			height: 14px;
+			width: 72px;
+			margin: 2px 0 2px 6px;
+			background: rgb(85, 85, 85);
+			color: #fff;
+			font-size: 12px;
+			border-radius: 6px;
+			border: 1px solid rgb(59, 59, 59);
+			position: relative;
+			text-align: center;
+			line-height: 14px;
+			top: -6px;
+		}
+
+		.audio_player .controls .play_button{
+			border: none;
+			display: inline-block;
+			height: 20px;
+			width: 20px;
+			border-radius: 10px;
+			margin: 2px 0 2px 6px;
+			background: rgb(95, 116, 124);
+			position: relative;
+			outline: none;
+			border: none;
+			cursor: pointer;
+		}
+
+		.audio_player .controls .play_button:hover{ background: rgb(112, 143, 155); }
+
+		.audio_player .controls i{
+			color: #fff;
+			font-size: 18px;
+			position: absolute;
+		}
+
+		.audio_player .controls .play_button i{
+			left: 1px;
+			top: 1px;
+		}
+
+		.audio_player .controls .progress_slider{
+			width : 314px;
+			height: 12px;
+			margin-left: 6px;
+			position: relative;
+			top: -4px;
+			display: inline-block;
+			-webkit-appearance: none;
+			appearance: none;
+			outline: none;
+			border-radius: 3px;
+			background: #015b7a; /* Old browsers */
+			background: -moz-linear-gradient(top, #015b7a 2%, #3e829a 50%, #015b7a 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #015b7a 2%,#3e829a 50%,#015b7a 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #015b7a 2%,#3e829a 50%,#015b7a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+
+		/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+		.audio_player .controls .progress_slider::-webkit-slider-thumb {
+			-webkit-appearance: none; /* Override default look */
+			appearance: none;
+			width: 12px;
+			height: 12px;
+			border-radius: 12px;
+			border: 2px solid #fff;
+			background: #919294; /* Old browsers */
+			background: -webkit-linear-gradient(top, #919294 0%,#f8f8f8 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #919294 0%,#f8f8f8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			cursor: pointer;
+		}
+		
+		.audio_player .controls .progress_slider::-moz-range-thumb {
+			width: 12px;
+			height: 12px;
+			border-radius: 12px;
+			border: 2px solid #fff;
+			background: #919294; /* Old browsers */
+			background: -moz-linear-gradient(top, #919294 0%, #f8f8f8 100%); /* FF3.6-15 */
+			background: linear-gradient(to bottom, #919294 0%,#f8f8f8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			cursor: pointer;
+		}
+
+		.audio_player .controls .mute_button{
+			border: none;
+			display: inline-block;
+			height: 20px;
+			width: 20px;
+			border-radius: 10px;
+			margin: 2px 0 2px 6px;
+			background: rgb(95, 116, 124);
+			position: relative;
+			outline: none;
+			border: none;
+			cursor: pointer;
+		}
+
+		.audio_player .controls .mute_button:hover{ background: rgb(112, 143, 155); }
+
+		.audio_player .controls i{
+			color: #fff;
+			font-size: 18px;
+			position: absolute;
+		}
+
+		.audio_player .controls .mute_button i{
+			left: 1px;
+			top: 1px;
+		}
+
+		.audio_player .volume_controls{
+			display: inline-block;
+			position: relative;
+		}
+
+		.audio_player .volume_controls .volume_slider{
+			width : 100px;
+			height: 12px;
+			transform-origin: 50px 6px;
+			transform: rotate(-90deg);
+			position: absolute;
+			top: -59px;
+			left: -36px;
+			display: none;
+			-webkit-appearance: none;
+			appearance: none;
+			outline: none;
+			border-radius: 3px;
+			background: #015b7a; /* Old browsers */
+			background: -moz-linear-gradient(top, #015b7a 2%, #3e829a 50%, #015b7a 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #015b7a 2%,#3e829a 50%,#015b7a 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #015b7a 2%,#3e829a 50%,#015b7a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+
+		.audio_player .volume_controls:hover .volume_slider{
+			display: block;
+		}
+
+		/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+		.audio_player .controls .volume_slider::-webkit-slider-thumb {
+			-webkit-appearance: none; /* Override default look */
+			appearance: none;
+			width: 12px;
+			height: 12px;
+			border-radius: 12px;
+			border: 2px solid #fff;
+			background: #919294; /* Old browsers */
+			background: -webkit-linear-gradient(top, #919294 0%,#f8f8f8 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #919294 0%,#f8f8f8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			cursor: pointer;
+		}
+		
+		.audio_player .controls .volume_slider::-moz-range-thumb {
+			width: 12px;
+			height: 12px;
+			border-radius: 12px;
+			border: 2px solid #fff;
+			background: #919294; /* Old browsers */
+			background: -moz-linear-gradient(top, #919294 0%, #f8f8f8 100%); /* FF3.6-15 */
+			background: linear-gradient(to bottom, #919294 0%,#f8f8f8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			cursor: pointer;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class='audio_player'>
+		<audio 
+			controls="controls"
+			autoplay="true"
+			id="audioPlayerPOC"
+			class='player'
+		>
+			<source src="ff-16b-2c-44100hz-w.ogg" type="audio/ogg" />
+			<source src="ff-16b-2c-44100hz-w.mp3" type="audio/mpeg" />
+			<p>No browser support for the audio element.</p>
+		</audio>
+
+		<div class='controls'>
+			<button class='play_button' onclick="togglePlay()" type="button"aria-label="play pause toggle"><i class="material-icons">play_arrow</i></button>
+			<input type="range" min="0" max="100" value="0" class="progress_slider" id="progressSlider"/>
+			<span class='progress_timer' id='progressTimer' aria-label="timer">00:00 / 00:00</span>
+			<div class='volume_controls'>
+				<input type="range" min="0" max="100" value="50" class="volume_slider" id="volumeSlider"/>
+				<button class='mute_button' onclick="toggleMute()" type="button" aria-label="mute unmute toggle"><i class="material-icons">volume_mute</i></button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const player = document.getElementById("audioPlayerPOC");
+		const slider = document.getElementById("progressSlider");
+		const volume_slider = document.getElementById("volumeSlider");
+		const timer = document.getElementById("progressTimer");
+		let update_slider = true;
+		let volume = 1.0;
+		let last_volume = volume;
+
+		player.volume = volume;
+		volume_slider.value = player.volume * 100;
+
+		const formatSeconds = function(seconds){
+			return new Date(seconds * 1000).toISOString().substr(14, 5);
+		}
+
+		player.ontimeupdate = function(){
+			const progress = (player.currentTime / player.duration) * 100;
+
+			timer.innerText = `${formatSeconds(player.currentTime)} / ${formatSeconds(player.duration)}`;
+			if(update_slider === true){
+				slider.value = progress;
+			}
+		};
+
+		slider.onchange = function(){
+			const target_time = (slider.value / 100) * player.duration;
+			player.currentTime = target_time;
+			update_slider = true;
+		};
+
+		volume_slider.onchange = function(){
+			const target_volume = (volume_slider.value / 100);
+			last_volume = target_volume;
+			player.volume = target_volume;
+		}
+
+		//stop updating the slider so the user can interact
+		slider.oninput = function(){ update_slider = false; };
+
+		function togglePlay() { return player.paused ? player.play() : player.pause(); };
+		function toggleMute() { 
+			volume = (volume > 0) ? 0 : last_volume;
+			player.volume = volume;
+			volume_slider.value = player.volume * 100;
+		}
+	</script>
+</body>
+</html>
